@@ -1,0 +1,8 @@
+- Gather the bin points from the rest of the image (using range, colour edges, maybe colour transforms) Gabriel
+- Transform the points into a single 3D point set, using Iterative Closest Point Thomas
+- Split between and fit two planes (method unknown!)
+- Produce the following images: frontal view, top view, both coloured and plain
+- Produce zoomed image of the leftmost white square, orientating it perpendicular to view
+- Report the average and standard deviation of the angle between the box in each frame, and the box chosen as a frame of reference
+- Report statistics from fitting the points around the rightmost white S to it's assigned plane
+- Write Report!
