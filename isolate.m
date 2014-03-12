@@ -5,8 +5,8 @@ function [ isolated ] = isolate( kinect_data )
 
 isolated = cell(size(kinect_data));
 
-%Operate one the cells one by one
-for i = 1 : length(kinect_data)
+%Operate one the cells one by one (exclude the last 3 right now 
+for i = 1 : 17
     xyzrgb = kinect_data{i};
     rgb = xyzrgb(:,:,4:6);
     
@@ -15,32 +15,31 @@ for i = 1 : length(kinect_data)
     
     %Use the color data to isolate the box further
     reds = rgb(:,:,1) > 120 & rgb(:,:,2) < 100;
-    reds_l = bwlabel(reds, 4);
-    stats = regionprops(reds_l, 'Area', 'Orientation');
     
-    %Get the largest four groups that are mostly oriented on the x axis
-    [sorted_values, sort_idx] = sort([stats.Area], 'descend');
-    max_idx = sort_idx(1:4);
-    large_red_groups(max_idx) = stats(max_idx);
+    cc = bwconncomp(reds);
+    stats = regionprops(cc, 'Area', 'Orientation', 'BoundingBox');
+    idx = find([stats.Area] > 200 & abs([stats.Orientation]) < 10);
+    r_stats = stats(idx);
+    red_edges = ismember(labelmatrix(cc), idx);
     
-    %Now remove all groups that aren't aligned with the x axis
-    for i = 1 : length(large_red_groups)
-        if large_red_groups(i) == [] || abs(large_red_groups(i).Orientation) > 10
-            large_red_groups(i) = [];
-            continue;
-        end
-    end
-    lrag = large_red_groups;
+    %Fill in the gaps between the edges
+    bb1 = [r_stats(1).BoundingBox];
+    bb2 = [r_stats(2).BoundingBox];
+    top = round(min([bb1(2) bb2(2)]));
+    width = round(max([bb1(3) bb2(3)]));
+    height = round(max([bb1(2) bb2(2)]) + bb2(4) - top);
     
-    %remove all pixels that aren't in the large red groups
-    
+    se = strel('rectangle', [height width]);
+    %bin_bits is now a binary mask for data we want to keep
+    bin_bits = imclose(red_edges, se);
     
     xyzrgb(:,:,4:6) = rgb;
     
-    %Set all NaN range values to 0. This might be unnessecary
+    %Set all NaN range values to 0.
     xyzrgb(isnan(xyzrgb)) = 0;
 
     %Insert the isolated xyzrg into the return cell array
-    isolated{i} = xyzrgb;
+    %Repmat modifies xyzrgb to be 0 vals wherever bin_bits is a 0.
+    isolated{i} = xyzrgb.*repmat(bin_bits,[1,1,6]);
 end
 
