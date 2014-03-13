@@ -13,16 +13,13 @@ end
             case 'bool'
                 imshow(rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110);
             case 'depth'
-                xyz = reshape(xyzrgb(:,:,1:3),640*480,3);
-                xyz(find(xyz == 0)) = NaN;
+                xyz=imageToList(xyzrgb(:,:,1:3));
                 plot3(xyz(:,1),xyz(:,2),xyz(:,3), 'k.', 'MarkerSize', 0.1);
                 view(180, 0);
                 h=gca;
                 axis(h,'tight');
             case 'coloured'
-                xyzrgblist = reshape(xyzrgb(:,:,:),640*480,6);
-                xyzrgblist=unique(xyzrgblist,'rows')';
-                xyzrgblist(:,all(xyzrgblist(1:3,:)==0,1))=[];
+                xyzrgblist=imageToList(xyzrgb);
                 scatter3_kinectxyzrgb(xyzrgblist)
                 h=gca;
                 axis(h,'tight');
