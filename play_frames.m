@@ -20,11 +20,10 @@ end
                 h=gca;
                 axis(h,'tight');
             case 'coloured'
-                colormap(gca,xyzrgb_frame(:,4:6)/255);
-                xyz = reshape(xyzrgb(:,:,1:3),640*480,3);
-                xyz(find(xyz == 0)) = NaN;
-                plot3(xyz(:,1),xyz(:,2),xyz(:,3), 'k.', 'MarkerSize', 0.1);
-                view(180, 0);
+                xyzrgblist = reshape(xyzrgb(:,:,:),640*480,6);
+                xyzrgblist=unique(xyzrgblist,'rows')';
+                xyzrgblist(:,all(xyzrgblist(1:3,:)==0,1))=[];
+                scatter3_kinectxyzrgb(xyzrgblist)
                 h=gca;
                 axis(h,'tight');
         end
