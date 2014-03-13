@@ -14,7 +14,11 @@ end
                 imshow(rgb(:,:,1) > 120 & rgb(:,:,2) < 100);
             case 'depth'
                 xyz = reshape(xyzrgb(:,:,1:3),640*480,3);
+                xyz(find(xyz == 0)) = NaN;
                 plot3(xyz(:,1),xyz(:,2),xyz(:,3), 'k.', 'MarkerSize', 0.1);
+                view(180, 0);
+                h=gca;
+                axis(h,'tight');
         end
         pause();
     end
