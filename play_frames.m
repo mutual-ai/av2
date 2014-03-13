@@ -11,7 +11,7 @@ end
             case 'rgb'
                 imshow(rgb/255);
             case 'bool'
-                imshow(rgb(:,:,1) > 120 & rgb(:,:,2) < 100);
+                imshow(rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110);
             case 'depth'
                 xyz = reshape(xyzrgb(:,:,1:3),640*480,3);
                 xyz(find(xyz == 0)) = NaN;
