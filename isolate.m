@@ -5,19 +5,55 @@ function [ isolated ] = isolate( kinect_data )
 
 isolated = cell(size(kinect_data));
 
-%Operate one the cells one by one
+%Operate one the cells one by one (exclude the last 3 right now 
 for i = 1 : length(kinect_data)
     xyzrgb = kinect_data{i};
     rgb = xyzrgb(:,:,4:6);
     
     %Exclude all the rgb data points associated with NaN range values
     rgb(isnan(xyzrgb)) = 0;
+    
+    %Use the color data to isolate the box further
+    reds = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
+    
+    cc = bwconncomp(reds);
+    stats = regionprops(cc, 'Area', 'Orientation', 'BoundingBox');
+    idx = find([stats.Area] > 200 & abs([stats.Orientation]) < 10);
+    r_stats = stats(idx);
+    red_edges = ismember(labelmatrix(cc), idx);
+    
+    
+    %Fill in the gaps between the edges
+    bb1 = [r_stats(1).BoundingBox];
+   
+    if length(idx) < 2
+        %Fill right to the top
+        left = round(bb1(1));
+        right = round(bb1(1) + bb1(3));
+        bottom = round(bb1(2) + (bb1(4)/2));
+        bin_bits = red_edges;
+        bin_bits(1:bottom, left:right) = 1;
+    else
+        %Fill to the top edge of the bin
+        bb2 = [r_stats(2).BoundingBox];
+        bbheight = round(max([bb1(4) bb2(4)])/2);
+        bottom = round(max([bb1(2) bb2(2)]) + bbheight/2);
+        left = round(min([bb1(1) bb2(1)]));
+        right = left + round(max([bb1(3) bb2(3)]));
+        bin_bits = red_edges;
+        bin_bits(1:bottom, left:right) = 1;
+
+    end
+    se = strel('square', 10);
+    bwmorph
+    bin_bits = imclose(bin_bits, se);
     xyzrgb(:,:,4:6) = rgb;
     
-    %Set all NaN range values to 0. This might be unnessecary
+    %Set all NaN range values to 0.
     xyzrgb(isnan(xyzrgb)) = 0;
 
     %Insert the isolated xyzrg into the return cell array
-    isolated{i} = xyzrgb;
+    %Repmat modifies xyzrgb to be 0 vals wherever bin_bits is a 0.
+    isolated{i} = xyzrgb.*repmat(bin_bits,[1,1,6]);
 end
 

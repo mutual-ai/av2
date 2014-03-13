@@ -5,6 +5,7 @@ if nargin < 2
     mode = 'rgb';
 end
     for i = 1: length(kinect_data)
+        i
         xyzrgb = kinect_data{i};
         rgb = xyzrgb(:, :, 4:6);
         switch mode
@@ -13,6 +14,6 @@ end
             case 'bool'
                 imshow(rgb(:,:,1) > 120 & rgb(:,:,2) < 100);
         end
-        pause(0.1);
+        pause();
     end
 end
