@@ -14,7 +14,7 @@ for i = 1 : 17
     rgb(isnan(xyzrgb)) = 0;
     
     %Use the color data to isolate the box further
-    reds = rgb(:,:,1) > 120 & rgb(:,:,2) < 100;
+    reds = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
     
     cc = bwconncomp(reds);
     stats = regionprops(cc, 'Area', 'Orientation', 'BoundingBox');
