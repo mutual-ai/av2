@@ -10,31 +10,30 @@ function [Ricp, Ticp, xyzlist2] = alignPoints(isolated)
 [~,numFrames]=size(isolated);
 totalPoints=0;
 for i=1:numFrames
-    fprintf('preparing frame %d\n',i)
-    xyzlist{i} = reshape(isolated{i}(:,:,1:3),640*480,3)';
-    xyzlist{i}=unique(xyzlist{i}','rows')';
+    fprintf('preparing frame %d\n',i);
+    xyzlist{i} = reshape(isolated{i}(:,:,:),640*480,6);
+    xyzlist{i}=unique(xyzlist{i},'rows')';
+    xyzlist{i}(:,all(xyzlist{i}(1:3,:)==0,1))=[];
     [~,n{i}]=size(xyzlist{i});
     totalPoints=totalPoints+n{i};
 end
 %find the necessary rotation and transform matrices between each frame.
-%TODO - also find the scale factor
-%TODO - could perhaps use colour distance also?
 for i=1:(numFrames-1)
-    fprintf('integrating frame %d\n',i)
-    [Ricp{i} Ticp{i} ER{i} t{i}] = icp(xyzlist{i}, xyzlist{i+1}, 15, 'Matching', 'Delaunay');
+    fprintf('integrating frame %d\n',i+1)
+    j=1;
+    [Ricp{i} Ticp{i} ER{i} t{i}] = icp(xyzlist{i}(1:3,:), xyzlist{i+1}(1:3,:), 'Matching', 'Delaunay');
 end
-xyzlist2=zeros(3,totalPoints);
+xyzlist2=zeros(6,totalPoints);
 %transform the points so as to create a single 3D image containing all the
 %points
-%TODO - %xyzlist2 should be coloured, use mean or median?
 a=1;
 for i=1:numFrames    
     fprintf('transforming frame %d\n',i)
     b=a+n{i}-1;
-    xyzlist2(:,a:b)=xyzlist{i}(1:3,:);
+    xyzlist2(:,a:b)=xyzlist{i}(:,:);
     for j=1:(i-1)
-        fprintf('\t using the transform from frame %d\n',i)
-        xyzlist2(:,a:b)=Ricp{j}*xyzlist2(:,a:b) + repmat(Ticp{j}, 1, n{i});
+        fprintf('\tusing the transform from frame %d\n',j);
+        xyzlist2(1:3,a:b)=Ricp{j}*xyzlist2(1:3,a:b) + repmat(Ticp{j}, 1, n{i});
     end
     a=a+n{i};
 end

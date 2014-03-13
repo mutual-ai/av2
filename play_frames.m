@@ -5,7 +5,6 @@ if nargin < 2
     mode = 'rgb';
 end
     for i = 1: length(kinect_data)
-        i
         xyzrgb = kinect_data{i};
         rgb = xyzrgb(:, :, 4:6);
         switch mode

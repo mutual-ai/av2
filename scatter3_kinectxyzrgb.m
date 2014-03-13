@@ -1,8 +1,10 @@
-function [  ] = scatter3_kinectxyzrgb( xyzrgb_frame )
+function [] = scatter3_kinectxyzrgb(xyzrgblist)
+%modified
+xyzrgblist=xyzrgblist';
 
 % convert from 640x480 image to 307200x6 point list 
-xyz  = reshape(xyzrgb_frame(:,:,1:3),640*480,3);
-rgb  = reshape(xyzrgb_frame(:,:,4:6),640*480,3);
+xyz  = xyzrgblist(:,1:3);
+rgb  = xyzrgblist(:,4:6);
 xyzrgb_frame = [ xyz , rgb ];
 
 % only plot valid points (strip out NaN rows)
