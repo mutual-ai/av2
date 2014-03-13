@@ -6,7 +6,7 @@ function [ isolated ] = isolate( kinect_data )
 isolated = cell(size(kinect_data));
 
 %Operate one the cells one by one (exclude the last 3 right now 
-for i = 1 : 17
+for i = 1 : length(kinect_data)
     xyzrgb = kinect_data{i};
     rgb = xyzrgb(:,:,4:6);
     
@@ -22,17 +22,31 @@ for i = 1 : 17
     r_stats = stats(idx);
     red_edges = ismember(labelmatrix(cc), idx);
     
+    
     %Fill in the gaps between the edges
     bb1 = [r_stats(1).BoundingBox];
-    bb2 = [r_stats(2).BoundingBox];
-    top = round(min([bb1(2) bb2(2)]));
-    width = round(max([bb1(3) bb2(3)]));
-    height = round(max([bb1(2) bb2(2)]) + bb2(4) - top);
-    
-    se = strel('rectangle', [height width]);
-    %bin_bits is now a binary mask for data we want to keep
-    bin_bits = imclose(red_edges, se);
-    
+   
+    if length(idx) < 2
+        %Fill right to the top
+        left = round(bb1(1));
+        right = round(bb1(1) + bb1(3));
+        bottom = round(bb1(2) + (bb1(4)/2));
+        bin_bits = red_edges;
+        bin_bits(1:bottom, left:right) = 1;
+    else
+        %Fill to the top edge of the bin
+        bb2 = [r_stats(2).BoundingBox];
+        bbheight = round(max([bb1(4) bb2(4)])/2);
+        bottom = round(max([bb1(2) bb2(2)]) + bbheight/2);
+        left = round(min([bb1(1) bb2(1)]));
+        right = left + round(max([bb1(3) bb2(3)]));
+        bin_bits = red_edges;
+        bin_bits(1:bottom, left:right) = 1;
+
+    end
+    se = strel('square', 10);
+    bwmorph
+    bin_bits = imclose(bin_bits, se);
     xyzrgb(:,:,4:6) = rgb;
     
     %Set all NaN range values to 0.
