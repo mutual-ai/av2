@@ -19,7 +19,7 @@ end
                 h=gca;
                 axis(h,'tight');
             case 'coloured'
-                xyzrgblist=imageToList(xyzrgb);
+                xyzrgblist=imageToList(xyzrgb)';
                 scatter3_kinectxyzrgb(xyzrgblist)
                 h=gca;
                 axis(h,'tight');

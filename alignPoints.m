@@ -11,7 +11,7 @@ function [Ricp, Ticp, xyzrgblist2] = alignPoints(isolated)
 totalPoints=0;
 for i=1:numFrames
     fprintf('preparing frame %d\n',i);
-    xyzrgblist{i}=imageToList(isolated{i});
+    xyzrgblist{i}=imageToList(isolated{i})';
     [~,n{i}]=size(xyzrgblist{i});
     totalPoints=totalPoints+n{i};
 end
