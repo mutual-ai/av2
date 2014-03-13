@@ -31,8 +31,8 @@ for i = 1 : length(kinect_data)
         left = round(bb1(1));
         right = round(bb1(1) + bb1(3));
         bottom = round(bb1(2) + (bb1(4)/2));
-        bin_bits = red_edges;
-        bin_bits(1:bottom, left:right) = 1;
+        bin_cbits = red_edges;
+        bin_cbits(1:bottom, left:right) = 1;
     else
         %Fill to the top edge of the bin
         bb2 = [r_stats(2).BoundingBox];
@@ -40,20 +40,25 @@ for i = 1 : length(kinect_data)
         bottom = round(max([bb1(2) bb2(2)]) + bbheight/2);
         left = round(min([bb1(1) bb2(1)]));
         right = left + round(max([bb1(3) bb2(3)]));
-        bin_bits = red_edges;
-        bin_bits(1:bottom, left:right) = 1;
+        bin_cbits = red_edges;
+        bin_cbits(1:bottom, left:right) = 1;
 
     end
     se = strel('square', 10);
-    bwmorph
-    bin_bits = imclose(bin_bits, se);
+    bin_cbits = imclose(bin_cbits, se);
+    
     xyzrgb(:,:,4:6) = rgb;
     
     %Set all NaN range values to 0.
     xyzrgb(isnan(xyzrgb)) = 0;
+    
+    xyzrgb_cbin = xyzrgb.*repmat(bin_cbits,[1,1,6]);
+    
+    outliers = outlier_idx(xyzrgb_cbin(:,:,3));
+    bin_bits = bin_cbits - outliers;
 
     %Insert the isolated xyzrg into the return cell array
     %Repmat modifies xyzrgb to be 0 vals wherever bin_bits is a 0.
-    isolated{i} = xyzrgb.*repmat(bin_bits,[1,1,6]);
+    isolated{i} = xyzrgb_cbin.*repmat(bin_bits,[1,1,6]);
 end
 

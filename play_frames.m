@@ -13,6 +13,9 @@ end
                 imshow(rgb/255);
             case 'bool'
                 imshow(rgb(:,:,1) > 120 & rgb(:,:,2) < 100);
+            case 'depth'
+                xyz = reshape(xyzrgb(:,:,1:3),640*480,3);
+                plot3(xyz(:,1),xyz(:,2),xyz(:,3), 'k.', 'MarkerSize', 0.1);
         end
         pause();
     end
