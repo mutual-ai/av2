@@ -2,6 +2,7 @@ function [Ricp, Ticp, xyzrgblist2] = alignPoints(isolated)
 %% 
 % TODO - accept edge points separately, and give their contribution greater
 % weight, and use it to initialize the main ICP
+% TODO - center the points first
 % Ricp{i} and Ticp{i} are the rotation and translation matrices, that aim to transform the points
 % in xyzlist{i} to the points in xyzlist{i+1}
 % xyzlist2 comprises all of the points in xyzlist{1:20}, transformed and
