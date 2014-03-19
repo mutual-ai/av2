@@ -5,9 +5,8 @@ function [ rangeEdges ] = edgeRangeData( isolated )
     rangeEdges = cell(size(isolated));
     for i = 1 : length(isolated)
         xyzrgb = isolated{i};
-        rgb = xyzrgb(:,:,4:6);
-        BW = edge(rgb(:,:,1), 'canny', .25);
-        rangeEdges{i} = xyzrgb.*repmat(BW, [1,1,6]);
+        [edges, ~] = find_s(xyzrgb);
+        rangeEdges{i} = xyzrgb.*repmat(edges, [1,1,6]);
     end    
 end
 
