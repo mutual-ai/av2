@@ -12,10 +12,13 @@ function [Ricp, Ticp, xyzrgblist2] = alignPoints2(isolated)
 midFrame=round(numFrames/2);
 for i=1:numFrames
     fprintf('preparing frame %d\n',i);
-    xyzrgblist{i}=imageToList(isolated{i})';
+    xyzrgblist{i} = isolated{i};
+    xyzrgblist{i} = xyzrgblist{i}(any(xyzrgblist{i},2),:);
+    xyzrgblist{i}=unique(xyzrgblist{i},'rows')';
     [~,n{i}]=size(xyzrgblist{i});
 end
 for i=1:numFrames
+    xyzrgblist2{i}=xyzrgblist{i};
     if (i~=midFrame)
         fprintf('integrating frame %d\n',i)
         %find the necessary rotation and transform matrices between each frame.
@@ -23,7 +26,6 @@ for i=1:numFrames
         %transform the points so as to create a single 3D image containing all the
         %points
         fprintf('transforming frame %d\n',i)
-        xyzrgblist2{i}=xyzrgblist{i};
         xyzrgblist2{i}(1:3,:)=Ricp{i}*xyzrgblist{i}(1:3,:) + repmat(Ticp{i}, 1, n{i});
     end
 end

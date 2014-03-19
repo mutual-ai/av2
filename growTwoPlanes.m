@@ -77,7 +77,7 @@ while (i>2) %while still more than two planes, delete the smallest
     remaining=[remaining; save{minIndex}];
     disp 'deleting a plane'
     size(remaining)
-    save(minIndex)=[]
+    save(minIndex)=[];
     numPointsInPlane(minIndex)=[];
     i=i-1;
 end
