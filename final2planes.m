@@ -22,10 +22,8 @@ for p=1:2
         transformedPlanePoints{p}=zeros(6,numPointsPlane(p));
         b(p)=a(p)+n{i}-1;
         transformedPlanePoints{p}(:,a(p):b(p))=planepoints{p,i}(:,:);
-        for j=1:(i-1)
-            fprintf('\tusing the transform from frame %d\n',j);
-            transformedPlanePoints{p}(1:3,a(1):b(1))=Ricp{j}*transformedPlanePoints{p}(1:3,a(p):b(p)) + repmat(Ticp{j}, 1, n{i});
-        end
+        fprintf('\tusing the transform from frame %d\n',i);
+        transformedPlanePoints{p}(1:3,a(1):b(1))=Ricp{i}*transformedPlanePoints{p}(1:3,a(p):b(p)) + repmat(Ticp{i}, 1, n{i});
         a(p)=a(p)+n{i};
     end
     [plane(p,:),resid(p)] = fitplane(transformedPlanePoints{p});
