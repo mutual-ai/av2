@@ -1,4 +1,4 @@
-function [Ricp, Ticp, xyzrgblist2] = alignPoints(isolated)
+function [Ricp, Ticp, xyzrgblist2] = alignPoints2(isolated)
 %% 
 % TODO - accept edge points separately, and give their contribution greater
 % weight, and use it to initialize the main ICP
@@ -17,23 +17,20 @@ for i=1:numFrames
     totalPoints=totalPoints+n{i};
 end
 %find the necessary rotation and transform matrices between each frame.
-for i=1:(numFrames-1)
-    fprintf('integrating frame %d\n',i+1)
-    j=1;
-    [Ricp{i} Ticp{i} ER{i} t{i}] = icp(xyzrgblist{i}(1:3,:), xyzrgblist{i+1}(1:3,:), 'Matching', 'Delaunay');
+for i=1:numFrames
+    if (i~=10)
+        fprintf('integrating frame %d\n',i)
+        j=1;
+        [Ricp{i} Ticp{i} ER{i} t{i}] = icp(xyzrgblist{i}(1:3,:), xyzrgblist{10}(1:3,:), 'Matching', 'Delaunay');
+    end
 end
-xyzrgblist2=zeros(6,totalPoints);
 %transform the points so as to create a single 3D image containing all the
 %points
-a=1;
-for i=1:numFrames    
-    fprintf('transforming frame %d\n',i)
-    b=a+n{i}-1;
-    xyzrgblist2(:,a:b)=xyzrgblist{i}(:,:);
-    for j=1:(i-1)
+for i=1:numFrames 
+    if (i~=10)
+        fprintf('transforming frame %d\n',i)
         fprintf('\tusing the transform from frame %d\n',j);
-        xyzrgblist2(1:3,a:b)=Ricp{j}*xyzrgblist2(1:3,a:b) + repmat(Ticp{j}, 1, n{i});
+        xyzrgblist2{i}=Ricp{i}*xyzrgblist{i} + repmat(Ticp{i}, 1, n{i});
     end
-    a=a+n{i};
 end
 end
