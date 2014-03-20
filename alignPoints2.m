@@ -21,13 +21,15 @@ for i=1:numFrames
         xyzrgblistedges{i} = edges{i};
         xyzrgblistedges{i} = xyzrgblistedges{i}(any(xyzrgblistedges{i},2),:);
         xyzrgblistedges{i}=unique(xyzrgblistedges{i},'rows')';
-        [xyzrgblistedges{i},meanPosition] = centreByMean(xyzrgblistedges{i});
-        xyzrgblist{i}(1:3,:)=xyzrgblist{i}(1:3,:) - repmat(meanPosition, 1, n{i});
+        %[xyzrgblistedges{i},meanPosition] = centreByMean(xyzrgblistedges{i});
+        %xyzrgblist{i}(1:3,:)=xyzrgblist{i}(1:3,:) - repmat(meanPosition, 1, n{i});
     end
 end
 for i=1:numFrames
     xyzrgblist2{i}=xyzrgblist{i};
-    xyzrgblistedges2{i}=xyzrgblistedges{i};
+    if (~isempty(edges))
+        xyzrgblistedges2{i}=xyzrgblistedges{i};
+    end
     if (i~=midFrame)
         fprintf('integrating frame %d\n',i)
         %find the necessary rotation and transform matrices between each frame.
