@@ -72,5 +72,5 @@ for p=1:2
     scatter3_kinectxyzrgb(projectedPoints{p});
 end
 angle=angleBetweenPlanes(plane(1,:),plane(2,:));
-fprintf('The angle between the two planes is %d\n',angle);
+fprintf('The angle between the two planes is %d radians\n',angle);
 %end
