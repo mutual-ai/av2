@@ -4,6 +4,12 @@ function [ isolated ] = isolate( kinect_data )
 %   Detailed explanation goes here
 
 isolated = cell(size(kinect_data));
+red_min = 0.4;
+red_max = 1;
+green_min = .14;
+green_max = 0.6;
+blue_min = 0;
+blue_max = 0.4;
 
 %Operate one the cells one by one (exclude the last 3 right now 
 for i = 1 : length(kinect_data)
@@ -14,9 +20,9 @@ for i = 1 : length(kinect_data)
     rgb(isnan(xyzrgb)) = 0;
     
     %Use the color data to isolate the box further
-    reds = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
-    
-    cc = bwconncomp(reds);
+    red_bits = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
+
+    cc = bwconncomp(red_bits);
     stats = regionprops(cc, 'Area', 'Orientation', 'BoundingBox');
     idx = find([stats.Area] > 200 & abs([stats.Orientation]) < 10);
     r_stats = stats(idx);
@@ -31,8 +37,6 @@ for i = 1 : length(kinect_data)
         left = round(bb1(1));
         right = round(bb1(1) + bb1(3));
         bottom = round(bb1(2) + (bb1(4)/2));
-        bin_cbits = red_edges;
-        bin_cbits(1:bottom, left:right) = 1;
     else
         %Fill to the top edge of the bin
         bb2 = [r_stats(2).BoundingBox];
@@ -40,10 +44,10 @@ for i = 1 : length(kinect_data)
         bottom = round(max([bb1(2) bb2(2)]) + bbheight/2);
         left = round(min([bb1(1) bb2(1)]));
         right = left + round(max([bb1(3) bb2(3)]));
-        bin_cbits = red_edges;
-        bin_cbits(1:bottom, left:right) = 1;
-
     end
+    bin_mask = zeros(size(red_edges));
+    bin_mask(1:bottom, left:right) = 1;
+    bin_cbits = (red_edges | bin_mask);
     se = strel('square', 10);
     bin_cbits = imclose(bin_cbits, se);
     
