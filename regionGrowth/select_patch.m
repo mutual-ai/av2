@@ -2,8 +2,8 @@
 function [fitlist,plane] = select_patch(points)
 
   [L,D] = size(points);
-  tmpnew = zeros(L,3);
-  tmprest = zeros(L,3);
+  tmpnew = zeros(L,D);
+  tmprest = zeros(L,D);
 
   % pick a random point until a successful plane is found
   success = 0;
@@ -17,7 +17,7 @@ function [fitlist,plane] = select_patch(points)
     fitcount = 0;
     restcount = 0;
     for i = 1 : L
-      dist = norm(points(i,:) - pnt);
+      dist = norm(points(i,1:3) - pnt(1:3));
       if dist < DISTTOL
         fitcount = fitcount + 1;
         tmpnew(fitcount,:) = points(i,:);

@@ -1,7 +1,6 @@
-function [save] = growTwoPlanes(isolatedFrame)
+function [save] = growTwoPlanes(R)
 
 %R = load('rngdata.asc');
-R=imageToList(isolatedFrame(:,:,1:3));
 figure(1)
 clf
 plot3(R(:,1),R(:,2),R(:,3),'k.')
