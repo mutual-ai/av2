@@ -1,18 +1,18 @@
 %function [plane1,plane2] = final2planes(isolated)
-for i=1:20
-    listopoints=imageToList(isolated{i});
+%for i=1:20
+%    listopoints=imageToList(isolated{i});
     %thin the point cloud, for quick testing
-    [numPoints,~]=size(listopoints);
+%    [numPoints,~]=size(listopoints);
     %r=[];
     %for p=1:numPoints
     %    r(p)=rand()>0.05;
     %end
     %listopoints(logical(r),:)=[];
-    points = growTwoPlanes(listopoints);
-    planepoints{1,i} = points{1};
-    planepoints{2,i} = points{2};
-    bothPlanes{i}=[planepoints{1,i}; planepoints{2,i}];
-end
+%    points = growTwoPlanes(listopoints);
+%    planepoints{1,i} = points{1};
+%    planepoints{2,i} = points{2};
+%    bothPlanes{i}=[planepoints{1,i}; planepoints{2,i}];
+%end
 %bothPlanes is the point set without outliers - but should still be
 %re-split into better planes
 [Ricp, Ticp, ~] = alignPoints2(bothPlanes,[]);
@@ -65,7 +65,7 @@ for p=1:2
     z = (-normal(1)*xx - normal(2)*yy - d)/normal(3);
     %# plot the surface
     hold on;
-    surf(xx,yy,z)
+    %surf(xx,yy,z)
     fprintf('Projecting all points in plane %d to the plane\n',p);
     projectedPoints{p}=projectPoints(transformedSplitPlanePoints{p}, plane(p,:));
     fprintf('Displaying projected points in plane %d\n',p);
