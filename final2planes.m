@@ -1,13 +1,13 @@
 %function [plane1,plane2] = final2planes(isolated)
-for i=1:3
-    listopoints=imageToList(isolated2{i});
+for i=1:20
+    listopoints=imageToList(isolated{i});
     %thin the point cloud, for quick testing
     [numPoints,~]=size(listopoints);
-    r=[];
-    for p=1:numPoints
-        r(p)=rand()>0.05;
-    end
-    listopoints(logical(r),:)=[];
+    %r=[];
+    %for p=1:numPoints
+    %    r(p)=rand()>0.05;
+    %end
+    %listopoints(logical(r),:)=[];
     points = growTwoPlanes(listopoints);
     planepoints{1,i} = points{1};
     planepoints{2,i} = points{2};
@@ -15,7 +15,7 @@ for i=1:3
 end
 %bothPlanes is the point set without outliers - but should still be
 %re-split into better planes
-[Ricp, Ticp, ~] = alignPoints2(bothPlanes);
+[Ricp, Ticp, ~] = alignPoints2(bothPlanes,[]);
 [~,numFrames]=size(bothPlanes);
 midFrame=round(numFrames/2);
 %transform the points so as to create a single 3D image containing all the
@@ -71,4 +71,6 @@ for p=1:2
     fprintf('Displaying projected points in plane %d\n',p);
     scatter3_kinectxyzrgb(projectedPoints{p});
 end
+angle=angleBetweenPlanes(plane(1,:),plane(2,:));
+fprintf('The angle between the two planes is %d\n',angle);
 %end

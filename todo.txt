@@ -1,12 +1,12 @@
 - Gather the bin points from the rest of the image (using range, colour edges, maybe colour transforms) Gabriel
 - initialize seed planes from a single frame - could average seed planes, just as long as each one is built from only a single image, to minimize blurring.
- (built by region growing)
-- separate the points into the two planes, as per the seed plane, for each image
-- discard outliers from the planes in each image
-- Transform the points into a single 3D point set, using Iterative Closest Point Thomas
--accept edges for icp
-- Fit two planes for the whole 3d Dataset - the points have already been split between two planes
--project each point to plane
+ (built by region growing) - Done
+- separate the points into the two planes, as per the seed plane, for each image - Done
+- discard outliers from the planes in each image - Done
+- Transform the points into a single 3D point set, using Iterative Closest Point - Done
+- accept edges for icp
+- Fit two planes for the whole 3d Dataset - the points have already been split between two planes - Done
+-project each point to plane - Done
 -provide angle between planes
 
 Weird things
