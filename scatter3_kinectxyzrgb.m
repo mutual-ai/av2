@@ -1,6 +1,5 @@
 function [] = scatter3_kinectxyzrgb(xyzrgblist)
 %modified
-xyzrgblist=xyzrgblist';
 
 % convert from 640x480 image to 307200x6 point list 
 xyz  = xyzrgblist(:,1:3);

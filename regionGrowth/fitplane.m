@@ -5,7 +5,7 @@ function [plane,fit] = fitplane(pointlist)
   plane = zeros(4,1);
   D = zeros(L,4);           % working array
 
-  com = mean(pointlist);    % compute centre of mass
+  com = mean(pointlist(:,1:3));    % compute centre of mass
   for k = 1 : L
     % subtract centre of mass to improve numerics
     % use a scale factor of 100 internally to balance value sizes
