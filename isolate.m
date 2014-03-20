@@ -15,7 +15,8 @@ for i = 1 : length(kinect_data)
     
     %Use the color data to isolate the box further
     reds = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
-    
+
+    %Isolate the orange bin edge groups using Area and Orientation
     cc = bwconncomp(reds);
     stats = regionprops(cc, 'Area', 'Orientation', 'BoundingBox');
     idx = find([stats.Area] > 200 & abs([stats.Orientation]) < 10);
@@ -44,9 +45,11 @@ for i = 1 : length(kinect_data)
         bin_cbits(1:bottom, left:right) = 1;
 
     end
+    %Close any small gaps in the mask
     se = strel('square', 10);
     bin_cbits = imclose(bin_cbits, se);
     
+    %Reassign 0 vals where NaNs were
     xyzrgb(:,:,4:6) = rgb;
     
     %Set all NaN range values to 0.
