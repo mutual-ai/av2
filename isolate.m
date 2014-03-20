@@ -4,12 +4,6 @@ function [ isolated ] = isolate( kinect_data )
 %   Detailed explanation goes here
 
 isolated = cell(size(kinect_data));
-red_min = 0.4;
-red_max = 1;
-green_min = .14;
-green_max = 0.6;
-blue_min = 0;
-blue_max = 0.4;
 
 %Operate one the cells one by one (exclude the last 3 right now 
 for i = 1 : length(kinect_data)
@@ -20,6 +14,12 @@ for i = 1 : length(kinect_data)
     rgb(isnan(xyzrgb)) = 0;
     
     %Use the color data to isolate the box further
+
+    red_bits = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
+
+    cc = bwconncomp(red_bits);
+
+    %Isolate the orange bin edge groups using Area and Orientation
     red_bits = rgb(:,:,1) > 120 & rgb(:,:,2) < 110 & rgb(:,:,3) < 110;
 
     cc = bwconncomp(red_bits);
@@ -45,12 +45,16 @@ for i = 1 : length(kinect_data)
         left = round(min([bb1(1) bb2(1)]));
         right = left + round(max([bb1(3) bb2(3)]));
     end
+
     bin_mask = zeros(size(red_edges));
     bin_mask(1:bottom, left:right) = 1;
     bin_cbits = (red_edges | bin_mask);
+
+    %Close any small gaps in the mask
     se = strel('square', 10);
     bin_cbits = imclose(bin_cbits, se);
     
+    %Reassign 0 vals where NaNs were
     xyzrgb(:,:,4:6) = rgb;
     
     %Set all NaN range values to 0.
